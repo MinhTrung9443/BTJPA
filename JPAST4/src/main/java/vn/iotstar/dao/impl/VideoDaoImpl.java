@@ -97,9 +97,9 @@ public class VideoDaoImpl implements IVideoDao {
 	@Override
 	public List<Video> findByVideoTitle(String vidname){
 		EntityManager enma = JPAConfig.getEntityManager();
-		String jpql = "SELECT v FROM Videos v WHERE v.title like :vidname";
-		TypedQuery<Video> query = enma.createNamedQuery(jpql, Video.class);
-		query.setParameter("title", "%" + vidname + "%");
+		String jpql = "SELECT v FROM Video v WHERE v.title LIKE :vidname";
+		TypedQuery<Video> query = enma.createQuery(jpql, Video.class);
+		query.setParameter("vidname", "%" + vidname + "%");
 		
 		return query.getResultList();
 	}
@@ -116,7 +116,7 @@ public class VideoDaoImpl implements IVideoDao {
 	@Override
 	public int count() {
 		EntityManager enma = JPAConfig.getEntityManager();
-		String jpql = "SELECT count(v) FROM Videos v";
+		String jpql = "SELECT count(v) FROM Video v";
 		Query query = (Query) enma.createQuery(jpql);
 		return ((Long)query.getSingleResult()).intValue();
 		

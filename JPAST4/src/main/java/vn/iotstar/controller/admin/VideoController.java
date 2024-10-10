@@ -175,7 +175,9 @@ public class VideoController extends HttpServlet{
 			videoservice.update(video);
 			resp.sendRedirect(req.getContextPath() + "/admin/videos");
 		} else if (url.contains("search")) {
-			req.getRequestDispatcher("/views/admin/videoSearch.jsp").forward(req, resp);
+			List<Video> list = videoservice.findByVideoTitle(req.getParameter("videoname"));
+			req.setAttribute("listvideo", list);
+			req.getRequestDispatcher("/views/admin/VideoList.jsp").forward(req, resp);
 		}
 	}
 	private static void deletepath(String filePath) throws IOException

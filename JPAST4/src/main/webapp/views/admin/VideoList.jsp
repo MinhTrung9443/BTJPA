@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
-<a href="${pageContext.request.contextPath}/admin/video/insert">Them Video</a>
+<a href="${pageContext.request.contextPath}/admin/video/insert">Them Video</a><br>
+<a href="${pageContext.request.contextPath}/admin/video/search">Tim Video</a>
 <table border = "1", width= 100%>
 	<tr>
 		<th>STT</th>
@@ -11,6 +12,7 @@
 		<th>Poster</th>
 		<th>Views</th>
 		<th>Active</th>
+
 		<th>Action</th>
 	</tr>
 	<c:forEach items="${listvideo}" var="video" varStatus="STT">
@@ -30,10 +32,12 @@
 			</td>
 			<td>${video.views }</td>
 			<td>${video.active==true ? "hoat dong" : "dung hoat dong"}</td>
+			
+			
 			<td><a
-				href="<c:url value='/admin/video/update?id=${video.videoid}'/>"
+				href="<c:url value='/admin/video/update?id=${video.videoid }'/>"
 				class="center">Sửa </a> | <a
-				href="<c:url value='/admin/video/delete?id=${video.videoid}'/>"
+				href="<c:url value='/admin/video/delete?id=${video.videoid }'/>"
 				class="center">Xóa </a></
 		</tr>
 	</c:forEach>
