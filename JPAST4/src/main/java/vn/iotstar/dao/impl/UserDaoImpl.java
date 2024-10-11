@@ -2,25 +2,25 @@ package vn.iotstar.dao.impl;
 
 import java.util.List;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import vn.iotstar.config.JPAConfig;
-import vn.iotstar.dao.ICategoryDao;
-import vn.iotstar.entity.Category;
+import vn.iotstar.dao.IUserDao;
+import vn.iotstar.entity.User;
 
-public class CategoryDao implements ICategoryDao{
+public class UserDaoImpl implements IUserDao{
+
 	@Override
-	public void insert(Category category) {
+	public void insert(User user) {
 		EntityManager enma = JPAConfig.getEntityManager();
 		EntityTransaction trans = enma.getTransaction();
 		
 		try {
 			trans.begin();
 			//goi phuong thuc de insert update delete
-			enma.persist(category);
+			enma.persist(user);
 			
 			trans.commit();
 		}
@@ -32,15 +32,16 @@ public class CategoryDao implements ICategoryDao{
 			enma.close();
 		}
 	}
+
 	@Override
-	public void update(Category category) {
+	public void update(User user) {
 		EntityManager enma = JPAConfig.getEntityManager();
 		EntityTransaction trans = enma.getTransaction();
 		
 		try {
 			trans.begin();
 			//goi phuong thuc de insert update delete
-			enma.merge(category);
+			enma.merge(user);
 			
 			trans.commit();
 		}
@@ -52,17 +53,18 @@ public class CategoryDao implements ICategoryDao{
 			enma.close();
 		}
 	}
+
 	@Override
-	public void delete(int cateid) throws Exception {
+	public void delete(int userid) throws Exception {
 		EntityManager enma = JPAConfig.getEntityManager();
 		EntityTransaction trans = enma.getTransaction();
 		
 		try {
 			trans.begin();
 			//goi phuong thuc de insert update delete
-			Category cate = enma.find(Category.class, cateid);
-			if (cate != null) {
-				enma.remove(cate);
+			User user = enma.find(User.class, userid);
+			if (user != null) {
+				enma.remove(user);
 			}else {
 				throw new Exception("Khong tim thay");
 			}
@@ -77,41 +79,46 @@ public class CategoryDao implements ICategoryDao{
 			enma.close();
 		}
 	}
+
 	@Override
-	public Category findById(int cateid)
+	public User findById(int userid)
 	{
 		EntityManager enma = JPAConfig.getEntityManager();
-		Category category = enma.find(Category.class, cateid);
-		return category;
+		User user = enma.find(User.class, userid);
+		return user;
 	}
+
 	@Override
-	public List<Category> findAll(){
+	public List<User> findAll(){
 		EntityManager enma = JPAConfig.getEntityManager();
-		TypedQuery<Category> query = enma.createNamedQuery("Category.findAll", Category.class);
+		TypedQuery<User> query = enma.createNamedQuery("User.findAll", User.class);
 		return query.getResultList();
 	}
 	
+
 	@Override
-	public List<Category> findByCategoryName(String catname){
+	public List<User> findByName(String name){
 		EntityManager enma = JPAConfig.getEntityManager();
-		String jpql = "SELECT c FROM Categorie c WHERE c.catecame like :catnam";
-		TypedQuery<Category> query = enma.createQuery(jpql, Category.class);
-		query.setParameter("catnam", "%" + catname + "%");
+		String jpql = "SELECT c FROM User c WHERE c.name like :name";
+		TypedQuery<User> query = enma.createQuery(jpql, User.class);
+		query.setParameter("catnam", "%" + name + "%");
 		
 		return query.getResultList();
 	}
+
 	@Override
-	public List<Category> findAll(int page, int pagesize){
+	public List<User> findAll(int page, int pagesize){
 		EntityManager enma = JPAConfig.getEntityManager();
-		TypedQuery<Category> query = enma.createNamedQuery("Category.findAll", Category.class);
+		TypedQuery<User> query = enma.createNamedQuery("User.findAll", User.class);
 		query.setFirstResult(page*pagesize);
 		query.setMaxResults(pagesize);
 		return query.getResultList();
 	}
+
 	@Override
 	public int count() {
 		EntityManager enma = JPAConfig.getEntityManager();
-		String jpql = "SELECT count(c) FROM Category c";
+		String jpql = "SELECT count(c) FROM User c";
 		Query query = (Query) enma.createQuery(jpql);
 		return ((Long)query.getSingleResult()).intValue();
 		

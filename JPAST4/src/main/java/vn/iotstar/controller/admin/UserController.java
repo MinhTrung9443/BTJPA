@@ -14,74 +14,78 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import vn.iotstar.entity.*;
-import vn.iotstar.service.ICategoryService;
-import vn.iotstar.service.impl.CategoryServiceImpl;
-
+import vn.iotstar.dao.IUserDao;
+import vn.iotstar.entity.Category;
+import vn.iotstar.entity.User;
+import vn.iotstar.service.IUserService;
+import vn.iotstar.service.impl.UserServiceImpl;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
 
-		maxFileSize = 1024 * 1024 * 5,
+maxFileSize = 1024 * 1024 * 5,
 
-		maxRequestSize = 1024 * 1024 * 5 * 5)
-@WebServlet(urlPatterns = { "/admin/categorys", "/admin/category/insert", "/admin/category/update",
-		"/admin/category/delete", "/admin/category/search" })
-public class CategoryController extends HttpServlet {
+maxRequestSize = 1024 * 1024 * 5 * 5)
+@WebServlet(urlPatterns = { "/admin/users", "/admin/user/insert", "/admin/user/update",
+"/admin/user/delete"})
+public class UserController  extends HttpServlet{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7118185900565619848L;
-	public ICategoryService cateservice = new CategoryServiceImpl();
-
+	private static final long serialVersionUID = 1L;
+	IUserService us = new UserServiceImpl();
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String url = req.getRequestURL().toString();
 		if (url.contains("insert")) {
 			req.setCharacterEncoding("UTF-8");
 			resp.setCharacterEncoding("UTF-8");
-			req.getRequestDispatcher("/views/admin/categoryInsert.jsp").forward(req, resp);
-		} else if (url.contains("categorys")) {
-			List<Category> list = cateservice.findAll();
-			req.setAttribute("listcate", list);
-			req.getRequestDispatcher("/views/admin/categoryList.jsp").forward(req, resp);
+			req.getRequestDispatcher("/views/admin/userInsert.jsp").forward(req, resp);
+		} else if (url.contains("users")) {
+			List<User> list = us.findAll();
+			req.setAttribute("listuser", list);
+			req.getRequestDispatcher("/views/admin/userList.jsp").forward(req, resp);
 		} else if (url.contains("update")) {
 			int id = Integer.parseInt(req.getParameter("id"));
-			Category cate = cateservice.findById(id);
-			req.setAttribute("cate", cate);
-			req.getRequestDispatcher("/views/admin/categoryUpdate.jsp").forward(req, resp);
+			User user = us.findById(id);
+			req.setAttribute("user", user);
+			req.getRequestDispatcher("/views/admin/userUpdate.jsp").forward(req, resp);
 		} else if (url.contains("delete")) {
 			String id = req.getParameter("id");
 			try {
-				Category cateold = new Category();
-				cateold = cateservice.findById(Integer.parseInt(id));
+				User userold = new User();
+				userold = us.findById(Integer.parseInt(id));
 				// xoa hinh cu
-				if (!cateold.getImages().substring(0,5).equals("https"))
+				if (!userold.getImages().substring(0,5).equals("https"))
 				{
-					deletepath("D:\\Lap-trinh-web\\upload" + "\\" + cateold.getImages());
+					deletepath("D:\\Lap-trinh-web\\upload" + "\\" + userold.getImages());
 				}
-				cateservice.delete(Integer.parseInt(id));
+				us.delete(Integer.parseInt(id));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			resp.sendRedirect(req.getContextPath() + "/admin/categorys");
-		} else if (url.contains("search")) {
-			req.getRequestDispatcher("/views/admin/categorySearch.jsp").forward(req, resp);
-		}
+			resp.sendRedirect(req.getContextPath() + "/admin/users");
+		} 
 	}
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String url = req.getRequestURL().toString();
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
 		if (url.contains("insert")) {
-			String categoryname = req.getParameter("categoryname");
-			String image = req.getParameter("image");
-			String active = req.getParameter("active");
-			Category cate = new Category();
-			cate.setCategoryname(categoryname);
-
+			String name = req.getParameter("name");
+			String username = req.getParameter("username");
+			String password = req.getParameter("password");
+			String status = req.getParameter("status");
+			
+			User user = new User();
+			user.setName(name);
+			user.setUsername(username);
+			user.setPassword(password);
+			user.setStatus(status.equals("true") ? 1 : 0);
+			
+			
+			
 			String fname = "";
 			String uploadPath = "D:\\Lap-trinh-web\\upload";
 			File uploadDir = new File(uploadPath);
@@ -89,7 +93,7 @@ public class CategoryController extends HttpServlet {
 				uploadDir.mkdir();
 			}
 			try {
-				Part part = req.getPart("image");
+				Part part = req.getPart("images");
 				if (part.getSize() > 0) {
 									
 										
@@ -101,30 +105,32 @@ public class CategoryController extends HttpServlet {
 					// upload
 					part.write(uploadPath + "/" + fname);
 					// ghi ten file vao data
-					cate.setImages(fname);
+					user.setImages(fname);
 				} else {
-					cate.setImages("defaul.jpg");
+					user.setImages("defaul.jpg");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			cate.setStatus(active.equals("true") ? 1 : 0);
-			cateservice.insert(cate);
-			resp.sendRedirect(req.getContextPath() + "/admin/categorys");
+			us.insert(user);
+			resp.sendRedirect(req.getContextPath() + "/admin/users");
 		} else if (url.contains("update")) {
-			int id = Integer.parseInt(req.getParameter("cateid"));
-			String categoryname = req.getParameter("categoryname");
-			String image = req.getParameter("image");
-			String active = req.getParameter("active");
-			Category cateold = new Category();
-			cateold = cateservice.findById(id);
+			int id = Integer.parseInt(req.getParameter("userid"));
+			String name = req.getParameter("name");
+			String username = req.getParameter("username");
+			String password = req.getParameter("password");
+			String status = req.getParameter("status");
 			
-			Category cate = new Category();
-			cate.setCategoryid(id);
-			cate.setCategoryname(categoryname);
-			cate.setImages(image);
-			cate.setStatus(active.equals("true") ? 1 : 0);
+			User user = new User();
+			user.setUserid(id);
+			user.setName(name);
+			user.setUsername(username);
+			user.setPassword(password);
+			user.setStatus(status.equals("true") ? 1 : 0);
+			
+			
+			User userold = us.findById(id);
 			
 			String fname = "";
 			String uploadPath = "D:\\Lap-trinh-web\\upload";
@@ -133,13 +139,13 @@ public class CategoryController extends HttpServlet {
 				uploadDir.mkdir();
 			}
 			try {
-				Part part = req.getPart("image");
+				Part part = req.getPart("images");
 				if (part.getSize() > 0) {
 					
 					// xoa hinh cu
-					if (!cateold.getImages().substring(0,5).equals("https"))
+					if (!userold.getImages().substring(0,5).equals("https"))
 					{
-						deletepath("D:\\Lap-trinh-web\\upload" + "\\" + cateold.getImages());
+						deletepath("D:\\Lap-trinh-web\\upload" + "\\" + userold.getImages());
 					}				
 					
 					
@@ -151,24 +157,25 @@ public class CategoryController extends HttpServlet {
 					// upload
 					part.write(uploadPath + "/" + fname);
 					// ghi ten file vao data
-					cate.setImages(fname);
+					user.setImages(fname);
 				} else {
-					cate.setImages(cateold.getImages());
+					user.setImages(userold.getImages());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			cateservice.update(cate);
-			resp.sendRedirect(req.getContextPath() + "/admin/categorys");
+			us.update(user);
+			resp.sendRedirect(req.getContextPath() + "/admin/users");
 		}
-
 	}
 	private static void deletepath(String filePath) throws IOException
 	{
+		try {
 		Path path = Paths.get(filePath);
 		 Files.delete(path);
+		}catch (Exception e) {
+			
+		}
 	}
-	
-
 }
