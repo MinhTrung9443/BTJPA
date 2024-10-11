@@ -23,47 +23,47 @@ import vn.iotstar.service.impl.VideoServiceImpl;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
 
-maxFileSize = 1024 * 1024 * 5,
+		maxFileSize = 1024 * 1024 * 5,
 
-maxRequestSize = 1024 * 1024 * 5 * 5)
-@WebServlet(urlPatterns = { "/admin/videos", "/admin/video/insert", "/admin/video/update",
-"/admin/video/delete", "/admin/video/search" })
-public class VideoController extends HttpServlet{
+		maxRequestSize = 1024 * 1024 * 5 * 5)
+@WebServlet(urlPatterns = { "/admin/videos", "/admin/video/insert", "/admin/video/update", "/admin/video/delete",
+		"/admin/video/search" })
+public class VideoController extends HttpServlet {
 	public IVideoService videoservice = new VideoServiceImpl();
 	public ICategoryService cateserv = new CategoryServiceImpl();
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String url = req.getRequestURL().toString();
 		if (url.contains("insert")) {
 			req.setCharacterEncoding("UTF-8");
 			resp.setCharacterEncoding("UTF-8");
-//			List<Category> categoryList = cateserv.findAll();
-//			req.setAttribute("categoryList", categoryList);
+			List<Category> categoryList = cateserv.findAll();
+			req.setAttribute("categoryList", categoryList);
 			req.getRequestDispatcher("/views/admin/videoInsert.jsp").forward(req, resp);
 		} else if (url.contains("videos")) {
 			List<Video> list = videoservice.findAll();
 			req.setAttribute("listvideo", list);
 			req.getRequestDispatcher("/views/admin/VideoList.jsp").forward(req, resp);
 		} else if (url.contains("update")) {
-//			List<Category> categoryList = cateserv.findAll();
-//			req.setAttribute("categoryList", categoryList);
+			List<Category> categoryList = cateserv.findAll();
+			req.setAttribute("categoryList", categoryList);
 			int id = Integer.parseInt(req.getParameter("id"));
 			Video video = videoservice.findById(id);
 			req.setAttribute("video", video);
 			req.getRequestDispatcher("/views/admin/videoUpdate.jsp").forward(req, resp);
 		} else if (url.contains("delete")) {
 			String id = req.getParameter("id");
-			
+
 			try {
 				Video video = new Video();
 				video = videoservice.findById(Integer.parseInt(id));
 				// xoa hinh cu
-				if (!(video.getPoster()==null) && !video.getPoster().substring(0,5).equals("https"))
-				{
+				if (!(video.getPoster() == null) && !video.getPoster().substring(0, 5).equals("https")) {
 					deletepath("D:\\Lap-trinh-web\\upload" + "\\" + video.getPoster());
 				}
 				System.out.println(video.getVideoid());
@@ -76,21 +76,24 @@ public class VideoController extends HttpServlet{
 			req.getRequestDispatcher("/views/admin/videoSearch.jsp").forward(req, resp);
 		}
 	}
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String url = req.getRequestURL().toString();
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
-		Video video= null; 
+		Video video = null;
 		if (url.contains("insert")) {
-			video= new Video();
+			video = new Video();
 			String title = req.getParameter("videotitle");
 			String description = req.getParameter("videodescription");
 			String poster = req.getParameter("poster");
 			String views = req.getParameter("videoviews");
 			String active = req.getParameter("active");
+			String cateid = req.getParameter("categoryid");
+			Category cate = cateserv.findById(Integer.parseInt(cateid));
 
-			
+			video.setCategory(cate);
 			video.setTitle(title);
 			video.setDescription(description);
 			video.setViews(Integer.parseInt(views));
@@ -105,7 +108,7 @@ public class VideoController extends HttpServlet{
 			try {
 				Part part = req.getPart("poster");
 				if (part.getSize() > 0) {
-											
+
 					String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
 					// doi ten file
 					int index = filename.lastIndexOf(".");
@@ -124,27 +127,27 @@ public class VideoController extends HttpServlet{
 
 			videoservice.insert(video);
 			resp.sendRedirect(req.getContextPath() + "/admin/videos");
-		} 
-		else if (url.contains("update")) {
-			video= new Video();
+		} else if (url.contains("update")) {
+			video = new Video();
 			int id = Integer.parseInt(req.getParameter("videoid"));
-			
+
 			Video videoold = new Video();
 			videoold = videoservice.findById(id);
-			
+
 			String title = req.getParameter("videotitle");
 			String description = req.getParameter("videodescription");
 			String views = req.getParameter("videoviews");
 			String active = req.getParameter("active");
+			String cateid = req.getParameter("categoryid");
+			Category cate = cateserv.findById(Integer.parseInt(cateid));
 
-			
+			video.setCategory(cate);
 			video.setVideoid(id);
 			video.setTitle(title);
 			video.setDescription(description);
 			video.setViews(Integer.parseInt(views));
 			video.setActive(active.equals("true"));
 
-			
 			String fname = "";
 			String uploadPath = "D:\\Lap-trinh-web\\upload";
 			File uploadDir = new File(uploadPath);
@@ -153,9 +156,9 @@ public class VideoController extends HttpServlet{
 			}
 			try {
 				Part part = req.getPart("poster");
-			
+
 				if (part.getSize() > 0) {
-											
+
 					String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
 					// doi ten file
 					int index = filename.lastIndexOf(".");
@@ -171,7 +174,7 @@ public class VideoController extends HttpServlet{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			videoservice.update(video);
 			resp.sendRedirect(req.getContextPath() + "/admin/videos");
 		} else if (url.contains("search")) {
@@ -180,9 +183,9 @@ public class VideoController extends HttpServlet{
 			req.getRequestDispatcher("/views/admin/VideoList.jsp").forward(req, resp);
 		}
 	}
-	private static void deletepath(String filePath) throws IOException
-	{
+
+	private static void deletepath(String filePath) throws IOException {
 		Path path = Paths.get(filePath);
-		 Files.delete(path);
+		Files.delete(path);
 	}
 }

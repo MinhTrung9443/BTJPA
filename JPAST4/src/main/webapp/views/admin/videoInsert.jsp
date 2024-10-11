@@ -23,11 +23,11 @@
 	<input type="text" name="videoviews"> <br>
 	<label for="active">Active</label> <br>
 	<input type="text"  name="active" value=""><br>
-	<!--<label>Category:</label> <br>
+	<label>Category:</label> <br>
 	 <select name="categoryid" style="weight: 300px;">
 		<c:forEach items="${categoryList}" var="category" >
-			<option value="${category.categoryid}">${category.categoryid}</option>
+			<option value="${category.categoryid}">${category.categoryname}</option>
 		</c:forEach>
-	</select><br>-->
+	</select><br>
 	<input type="submit" value="Submit">
 </form>

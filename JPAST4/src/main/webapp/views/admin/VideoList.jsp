@@ -12,7 +12,7 @@
 		<th>Poster</th>
 		<th>Views</th>
 		<th>Active</th>
-
+		<th>Category</th>
 		<th>Action</th>
 	</tr>
 	<c:forEach items="${listvideo}" var="video" varStatus="STT">
@@ -32,7 +32,7 @@
 			</td>
 			<td>${video.views }</td>
 			<td>${video.active==true ? "hoat dong" : "dung hoat dong"}</td>
-			
+			<td>${video.category.categoryname}</td>
 			
 			<td><a
 				href="<c:url value='/admin/video/update?id=${video.videoid }'/>"

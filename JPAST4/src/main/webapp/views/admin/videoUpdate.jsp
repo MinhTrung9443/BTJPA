@@ -23,12 +23,12 @@
 	<input type="text" name="videoviews" value="${video.views}"> <br>
 	<label for="active">Active</label> <br>
 	<input type="text"  name="active" value="${video.active == true ? 'Dang hoat dong':'Ngung cung cap'}"><br>
-	<!-- <label>Category:</label> <br>
+	 <label>Category:</label> <br>
 	<select name="categoryid" style="weight: 300px;" value="${video.category}">
 		<c:forEach items="${categoryList}" var="category" >
-			<option value="${category.categoryid}">${category.categoryid}</option>
+			<option value="${category.categoryid}">${category.categoryname}</option>
 		</c:forEach>
-	</select><br>-->
+	</select><br>
 	<input type="submit" value="Submit">"
 </form>
 
