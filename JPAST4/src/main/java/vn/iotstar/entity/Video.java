@@ -38,7 +38,8 @@ public class Video implements Serializable {
 	private int views;
 	 //bi-directional many-to-one association to Category
 	 @ManyToOne
-	 @JoinColumn(name="CategoryId")
+	 @JoinColumn(name="CategoryId")	 
+	 @ToString.Exclude
 	 private Category category;
 
 

@@ -25,11 +25,10 @@
 	<input type="text"  name="active" value="${video.active == true ? 'Dang hoat dong':'Ngung cung cap'}"><br>
 	 <label>Category:</label> <br>
 	<select name="categoryid" style="weight: 300px;" value="${video.category}">
-		<c:forEach items="${categoryList}" var="category" >
-			<option value="${category.categoryid}">${category.categoryname}</option>
-		</c:forEach>
-	</select><br>
-	<input type="submit" value="Submit">"
-</form>
+	<c:forEach items="${categoryList}" var="category">
+		<option value="${category.categoryid}">${category.categoryname}</option>
+	</c:forEach>
 
-<!-- enctype="multipart/form-data" -->
+	</select><br>
+	<input type="submit" value="Submit">
+</form>

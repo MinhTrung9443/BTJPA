@@ -50,12 +50,14 @@ public class VideoController extends HttpServlet {
 			req.setAttribute("listvideo", list);
 			req.getRequestDispatcher("/views/admin/VideoList.jsp").forward(req, resp);
 		} else if (url.contains("update")) {
-			List<Category> categoryList = cateserv.findAll();
-			req.setAttribute("categoryList", categoryList);
-			int id = Integer.parseInt(req.getParameter("id"));
-			Video video = videoservice.findById(id);
-			req.setAttribute("video", video);
-			req.getRequestDispatcher("/views/admin/videoUpdate.jsp").forward(req, resp);
+				List<Category> categoryList = cateserv.findAll();
+				String temp = req.getParameter("id");
+				int id = Integer.parseInt(temp);
+				Video video = videoservice.findById(id);
+				req.setAttribute("categoryList", categoryList);
+				req.setAttribute("video", video);
+				req.getRequestDispatcher("/views/admin/videoUpdate.jsp").forward(req, resp);
+
 		} else if (url.contains("delete")) {
 			String id = req.getParameter("id");
 
