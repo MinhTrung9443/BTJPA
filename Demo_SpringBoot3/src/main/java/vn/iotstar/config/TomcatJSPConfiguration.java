@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TomcatJSPConfiguration {
-	@Bean
-	public WebServerFactoryCustomizer<WebServerFactory> staticResourceCustomizer() {
+    @Bean
+    WebServerFactoryCustomizer<WebServerFactory> staticResourceCustomizer() {
 		return factory -> {
 			if (factory instanceof TomcatServletWebServerFactory tomcatFactory) {
 				tomcatFactory.addContextCustomizers(
